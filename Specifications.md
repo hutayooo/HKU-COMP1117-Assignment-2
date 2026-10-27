@@ -12,8 +12,27 @@ int, float, str, bool. Say why.
 
 - **Inputs:** what values does the program read, in what order, and what
   type is each?
+  1. Card Type: An integer from 1-3, since there are no decimals. 1 is an adult, 2 is a student, 3 is an elder
+  2. Starting Balance: Also an integer from -35 to 3000. The brief explicitly states that it is a whole number, which translates to the int data type
+
+  For the next inputs, they will be looping until the user exits the loop manually
+  3. Transaction kind: Another integer for the same reason, ranging from 0-2. 1 is a ride, 2 is top-up, 0 is to exit, thus breaking the loops
+  4. Transaction amounts: Once again, from the brief, the amount if a whole number, regardless if it is a top-up or a ride. So, the data type for this is int. However, it is important to note that the min/max values differ between a top-up and a ride
+
 - **Outputs:** what does the program print, what type is each value, and
   how are the money values printed?
+  1. Card type: String, as the output is either 'student', 'adult', or 'elder' which corresponds to the string data type  
+  2. Rides taken: Integer, as it outputs the number of rides the user takes. It is impossible to have a decimal number of rides, so this data type is an integer
+  3. Top-ups: Also integer, for the same reason that it is impossible to have a decimal number of top-ups
+  4. Fares paid: Float, since the fare paid, as stated in the brief "every fare and every balance in this assignment is a whole number or ends in .5", we need to be prepared for the .5 case (due to student discount to a odd-numbered fare). As such, a float is used instead of int, to handle the decimal
+  5. Lowest Balance: Float, since the balance is a whole number or ends in 5. For the same reason as fares paid, lowest balance also needs to be a float to handle the decimal
+  6. Final Balance: FLoat, for the same reasons
+  7. Refused: Integer, as it outputs the number of times a transaction was refused, which again has to be a whole number and cannot be a decimal
+  
+  After that, there is a transaction history. Each line represents a single transaction with each line consisting:
+  1. Transaction number: Integer. Once again, the transaction number cannot be a decimal, and will print whole numbers in ascending order
+  2. Status: String. This is the verdict of the transaction: (top-up/ride + accepted/rejected). This requires the string data type to represent
+  3. Transaction Balance: Float, for the same reasons that the balance can be a whole number or decimal ending with .5. However, not to be confused with the other balances, transaction balance records the balance directly after that transaction has been completed
 
 ## The rules in my own words
 
