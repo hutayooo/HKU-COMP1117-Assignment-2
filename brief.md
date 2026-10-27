@@ -12,7 +12,7 @@ The rules are short, but they affect each other. Whether a ride gets a discount 
 
 ### Card type
 
-The first input is the card type: 1 means adult, 2 means student, 3 means elder.
+The first input is the card type: 1 means adult, 2 means student, 3 means elder. a
 
 ### Starting balance
 
