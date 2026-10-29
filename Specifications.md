@@ -43,10 +43,21 @@ what happens just past it.
 
 - **What a ride costs:**: An adult pays the full cost, while a student card only pays half. An elder pays $2 or the full fare if the fare is less than $2. In other words, min(2, fare). An interchange discount of $1 is applied to the value we just worked out above. However, the final value cannot drop below 0. Meaning the value cap after the discount is $0. In other words, max(0, fare-1). If the previous transaction is a topup (regardless of status), a refused ride, or if it is the first ride of the day, no discount is applied. main() tracks this using a variable follows_ride, where True means the previous transaction was an accepted ride (apply interchange discount), and a False means the previous transaction is not an accepted ride
 
-- **When a ride is refused:**: According to the brief, there are 2 conditions that has to be met when a ride is accepted. So, using that, we can work out that a ride is refused if either the balance before the ride is 0 or less, or the balance after the transaction/after paying would be less than -35. 
-- **When a top-up is refused:**
+- **When a ride is refused:**: According to the brief, there are 2 conditions that has to be met when a ride is accepted. So, using that, we can work out that a ride is refused if either: 
+- the balance before the ride is 0 or less. a pre-ride balance of exactly 0 is refused. A value like 0.50 or 1 is accepted
+- or the balance after the transaction/after paying would be less than -35. if the post-ride balance is exactly -35, it is accepted. anything below that like -35.5 is refused
+
+- **When a top-up is refused:**: Once again, according to the brief, there are 3 conditions that has to be met when a top-up is accepted. So, we can work out that a top-up is refused if: 
+- the topup amount is not between 50-1000 inclusive. a value between 50-1000 is accepted, while values like 49 or 1050 is refused
+- the top-up amount is not a multiple of 50. an amount like 75 or 125 fails this check and is refused, even though it falls within the 50 to 1000 range
+-or the balance after the top-up is more than 3000. if a card has a balance of 2500 and receives a top-up of 500, the resulting balance is exactly 3000, which is accepted. if the balance after a topup is more than 3000 (e.g. 3050), the topup is refused
+
 - **What a refused transaction changes, and what it does not:**
+- What it changes: It changes the refused count, where it adds 1 to the total count of refused transactions. To accomodate for the history transaction section, it still receives a transaction number in sequential (ascending) order. A refused transaction will also change the status of the interchange discount flag (follows_ride) to false. The next ride will not receive the interchnage discount
+- What is doesn't change: The balance of the card does not change since the transaction was refused, regadless if it is a refused top-up or ride. No fares will also be charged or added to the cumulative total of fees paid. It also does not increase the successful transaction counts. This is specifically for the number of successful rides taken of top-ups made. It is also still recorded in the transactions list as a tuple to be printed in the history output, but its status is now 'refused' instead of 'accepted'
+
 - **The lowest balance:**
+
 - **The transaction history:** which transactions appear, their order and numbering, and what each line shows. How is this different from your chat history?
 
 ## Edge cases
