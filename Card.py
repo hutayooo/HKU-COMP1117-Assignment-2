@@ -40,7 +40,7 @@ def transaction_history(transactions):
         else:
             statusstr = "refused"
         
-        print(f"{index}: {kindstr} {statusstr}. Balance: {'{:.2f}'.format(balance_after)}") #prints the history line, :.2f to force the balance to print 2 decimal points
+        print(str(index) + ": " + kindstr + " " + statusstr + ". Balance: " + "{:.2f}".format(balance_after))
 
 def main():
     # main() is yours to write, by working it out with the AI assistant.
@@ -51,7 +51,13 @@ def main():
     #   - for each transaction, decide what to do, using your first three functions
     #   - print the summary and call transaction_history at the end
     card_type = int(input("Card type (1 adult, 2 student, 3 elder): "))
-    balance = float(input("Starting Balance: "))
+    if card_type == 1:
+        cardstr = "adult"
+    elif card_type == 2:
+        cardstr = "student"
+    else:
+        cardstr = "elder"
+    balance = float(input("Starting balance: "))
     lowest_bal = balance
     follows_ride = False
     transactions = []
@@ -68,11 +74,52 @@ def main():
 
         elif type == 1: #ride
             amount = float(input("Amount: "))
-            fare = ride_fare(card_type, amount, follows_ride)
+            fare = ride_fare(card_type, amount, follows_ride) #calculates fare
             
+            if can_ride(balance, fare):
+                balance -= fare
+                follows_ride = True
+                rides += 1
+                fares_paid += fare
+                accepted = True
+            else: #balance doesnt change
+                follows_ride = False
+                refused += 1
+                accepted = False
+
+            if balance < lowest_bal: #updates lowest balance if the current balance is lower than the previous lowest balance
+                lowest_bal = balance
             
-        
+            transactions.append((1, accepted, balance))
+            
+        elif type == 2: #top-up
+            amount = float(input("Amount: "))
+            
+            if can_top_up(balance, amount):
+                balance += amount
+                topups += 1
+                accepted = True
+            else: #balance doesnt change
+                refused += 1
+                accepted = False
+            
+            follows_ride = False #top-up resets follows_ride to false
+            
+            if (balance < lowest_bal): #updates lowest balance if the current balance is lower than the previous lowest balance
+                lowest_bal = balance #technically this shouldnt happen ever as a topup will increase balance, yet a rejected one wont change it. but just in case
+                
+            transactions.append((2, accepted, balance))
     
+    #print summary
+    print("Card type:", cardstr)
+    print("Rides taken:", rides)
+    print("Top-ups:", topups)
+    print("Fares paid:", "{:.2f}".format(fares_paid))
+    print("Lowest balance:", "{:.2f}".format(lowest_bal))
+    print("Final balance:", "{:.2f}".format(balance))
+    print("Refused:", refused)
+    
+    transaction_history(transactions)
 
 
 main()  # Don't change this
