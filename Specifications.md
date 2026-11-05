@@ -56,9 +56,14 @@ what happens just past it.
 - What it changes: It changes the refused count, where it adds 1 to the total count of refused transactions. To accomodate for the history transaction section, it still receives a transaction number in sequential (ascending) order. A refused transaction will also change the status of the interchange discount flag (follows_ride) to false. The next ride will not receive the interchnage discount
 - What is doesn't change: The balance of the card does not change since the transaction was refused, regadless if it is a refused top-up or ride. No fares will also be charged or added to the cumulative total of fees paid. It also does not increase the successful transaction counts. This is specifically for the number of successful rides taken of top-ups made. It is also still recorded in the transactions list as a tuple to be printed in the history output, but its status is now 'refused' instead of 'accepted'
 
-- **The lowest balance:**
+- **The lowest balance:**: It'll start with the starting balance as its baseline. It is then updated when a successful transaction causes the balance to drop below the previously recorded lowest balance. Refused rides will not affect the current balance, and thus the lowest balance. We will check if the current balance constitutes as the lowest balance after every successful transaction. 
 
-- **The transaction history:** which transactions appear, their order and numbering, and what each line shows. How is this different from your chat history?
+- **The transaction history:** which transactions appear, their order and numbering, and what each line shows. How is this different from your chat history? 
+The transaction history records every attempted transaction throughout the day and formats the final printed output after the summary lines. The data structure is a list, possibly with the name 'transactions', where it stores tuples:
+- kind: integer 1 for a ride or 2 for a top-up
+- status: bool, true if accepted, false if rejected
+- balance_after: float, the resulting balance if it is approved, or the prior balance if it is refused
+It then prints each record sequentially in input order, and is numbered starting from 1. It does not perform calculations of any sort, and the list should be untouched (function does not return, only print). The format of the output is stated and is in the brief <number>: <Ride|Top-up> <accepted|refused>. Balance: <0.00>, and is printed after the 7 lines summary. The raw data tuple from transactions is converted into human-readable text via the transaction_history function
 
 ## Edge cases
 
@@ -66,4 +71,41 @@ The inputs where something special happens, and what the program must do in
 each. For example: a ride straight after a refused ride, or a top-up that
 lands exactly on 3000.
 
--
+1. Ride immediately following a refused ride
+- A user attempts a ride, it gets refused, and they attempt a ride directly after
+- The first refused transaction resets follows_ride to False. As such, the next ride after, even if its accepted, gets no interchange discount
+
+2. Top-up landing on the balance cap (3000)
+- A card with a balance of $2500 receives a $500 top up, bringing the resulting balance to exactly 3000. Or any other combination of valid top-ups that result in a balance of 3000
+- The top-up is accepted because the rule specifies a maximum balance of <= 3000. If the balance goes to 3001 or above, the top-up is denied
+
+3. Ride dropping balance to exactly the negative balance limit (-35)
+- A ride fare reduces the card's post-ride balance to exactly -35
+- The ride is accepted because the post-ride rule permits balances >= -35. If the post ride balance is -35.5 or below instead, the ride is refused
+
+4. Pre-Ride balance of exactly 0
+- A card has a balance of 0 when attempting a ride
+- The ride is refused because the pre-ride balance must be strictly greater than 0
+
+5. Top-up amounts at the extremes
+- A user top-ups exactly 50 or exactly 1000
+- If the balance after the top-up would be 3000 or less, they will be accepted. Also, they are accepted since 50 and 1000 are both multiples of 50. A topup value like 49 or 1001 would be rejected as it is outside of the 50-1000 acceptable range
+
+6. Top-up amount within the range but not a multiple of 50
+- A user attempts to top-up 75  
+- Although within the range, the top-up is denied because it is not a multiple of 50
+
+7. Interchange discount brings fare to 0
+- The original fare is 0.5, and an interchange discount is applied
+- The fare becomes 0, not -0.5 as the fare after the discount is capped at 0
+
+8. Elder fare boundary at 2
+- An elder has a fre of 3, and another at 1
+- Anything above 2 gets capped to 2, so a fare of 3 would be set to 2. However, a fare of 1 will still be 1 as it is below the cap
+
+9. Zero transactions
+- User inputs zero transactions
+- Only outputs the 7 summary lines
+
+10. First transaction is a top-up
+- The follows_ride flag will be set to false, meaning the next ride (if any) will get no discount
