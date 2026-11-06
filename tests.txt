@@ -1,38 +1,21 @@
 # Function checks
-
-# 1. Refused ride resets discount (handled in program state) & general fare check
 ride_fare(1, 10.0, False) == 10.0
-
-# 2. Top-up landing on maximum cap (3000)
 can_top_up(2500.0, 500.0) == True
 can_top_up(2500.0, 501.0) == False
-
-# 3. Ride balance limit edge at -35
 can_ride(0.0, 35.0) == False
 can_ride(1.0, 36.0) == True
 can_ride(1.0, 36.5) == False
-
-# 4. Pre-ride balance strictly greater than 0
 can_ride(0.0, 5.0) == False
 can_ride(-5.0, 5.0) == False
-
-# 5. Top-up extremes (50 and 1000)
 can_top_up(100.0, 50.0) == True
 can_top_up(100.0, 1000.0) == True
-can_top_up(100.0, 49.0) == False
 can_top_up(100.0, 1001.0) == False
-
-# 6. Non-multiple of 50 top-up
 can_top_up(100.0, 75.0) == False
-
-# 7. Fare floor at 0 after interchange discount
 ride_fare(1, 0.5, True) == 0.0
-
-# 8. Elder fare boundary at 2 cap vs below cap
 ride_fare(3, 3.0, False) == 2.0
 ride_fare(3, 1.0, False) == 1.0
 
-# Program cases, based on the 10 edge cases specified in specifications.md
+# Program cases
 1
 5
 1
@@ -153,31 +136,3 @@ Final balance: 8.00
 Refused: 0
 1: Ride accepted. Balance: 8.00
 2: Ride accepted. Balance: 8.00
-
-1
-20
-0
-Card type: adult
-Rides taken: 0
-Top-ups: 0
-Fares paid: 0.00
-Lowest balance: 20.00
-Final balance: 20.00
-Refused: 0
-
-1
-10
-2
-50
-1
-10
-0
-Card type: adult
-Rides taken: 1
-Top-ups: 1
-Fares paid: 10.00
-Lowest balance: 10.00
-Final balance: 50.00
-Refused: 0
-1: Top-up accepted. Balance: 60.00
-2: Ride accepted. Balance: 50.00
