@@ -27,10 +27,10 @@
 #
 # - ALL checks passing ends with:
 #
-#       ----------------------------------------------------------------------
-#       Ran N tests in ...s
+#      ----------------------------------------------------------------------
+#      Ran N tests in ...s
 #
-#       OK
+#      OK
 #
 # - If SOME checks fail, each failed one is listed under "FAIL:" with what
 #   your program gave and what was expected; the run ends with
@@ -74,7 +74,7 @@ PROMPTS = [
 ]
 
 MAX_FUNCTION_CHECKS = 15
-MAX_PROGRAM_CASES = 8
+MAX_PROGRAM_CASES = 10
 
 
 # ---- The worked examples from brief.md ----
@@ -395,7 +395,7 @@ class WorkedExampleTests(unittest.TestCase):
 
     def test_no_transactions(self):
         self.check("1\n20\n0\n", ["Card type: adult", "Rides taken: 0", "Top-ups: 0",
-                   "Fares paid: 0.00", "Lowest balance: 20.00", "Final balance: 20.00", "Refused: 0"])
+                    "Fares paid: 0.00", "Lowest balance: 20.00", "Final balance: 20.00", "Refused: 0"])
 
     def test_example_3_elder(self):
         self.check(EXAMPLE_3_INPUT, EXAMPLE_3_OUTPUT)
